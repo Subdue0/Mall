@@ -1,0 +1,28 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- 定义activity切换动画-->
+        <item name="android:windowAnimationStyle">@style/activityAnim</item>
+
+        <!-- 隐藏状态栏 -->
+        <item name="android:windowFullscreen">true</item>
+        <!-- 隐藏标题栏 -->
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- 使用style方式定义activity切换动画 -->
+    <style name="activityAnim">
+        <!-- 打开新的Activity动画-->
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/unchanged</item>
+        <!-- 关闭当前Activity动画-->
+        <item name="android:activityCloseEnterAnimation">@anim/unchanged</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
+</resources>

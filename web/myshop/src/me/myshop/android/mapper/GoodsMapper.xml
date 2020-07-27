@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"  
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd"> 
+ 
+<mapper namespace="me.myshop.android.mapper.GoodsMapper">
+	<insert id="insertOrderGoods">
+		insert into og(order_id, good_id, good_num) values(#{orderId}, #{goods.id}, #{goods.number})
+	</insert>
+	
+	<select id="selectGoodsIdById" parameterType="Integer" resultType="Integer">
+		select good_id from goods where good_id=#{id}
+	</select>
+	
+	<select id="selectAllGoods" resultMap="GoodsMap">
+		select * from goods
+	</select>
+	
+	<!-- 结果集关系映射 -->
+	<resultMap id="GoodsMap" type="me.myshop.android.entity.Goods">
+		<!--id为主键  -->
+		<id column="good_id" property="id"/>
+        <!--column数据库中表的名  property是对应类的属性  -->
+        <result column="good_name" property="title"/>
+        <result column="good_price" property="price"/>
+        <result column="type_id" property="type"/>
+        <result column="good_status" property="status"/>
+        <result column="good_icon_url" property="imageIcon"/>
+        <result column="good_image_detail_url" property="imageDetail"/>
+    </resultMap>
+</mapper>

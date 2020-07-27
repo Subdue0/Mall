@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.myshop.web.dao.GoodDao">
+	<!-- 查询配件列表 -->
+	<select id="selectGoodList" parameterType="me.myshop.web.po.Good" resultType="me.myshop.web.po.Good">
+		SELECT
+		goods.good_id,
+		goods.good_name,
+		goods.good_price,
+		types.type_id,
+		types.type_name,
+		goods.good_detail,
+		goods.pic_url
+		FROM
+		goods
+		INNER JOIN types ON goods.type_id = types.type_id
+		<where>
+			<if test="good_name!=null">
+				good_name LIKE "%"#{good_name}"%"
+				OR type_name LIKE "%"#{good_name}"%"
+			</if>
+		</where>
+	</select>
+	<select id="selectGoodListCount" parameterType="me.myshop.web.po.Good" resultType="Integer">
+		select count(*) from goods
+	</select>
+	<!-- 添加配件 -->
+	<insert id="createGood" parameterType="me.myshop.web.po.Good">
+		insert into goods(
+			good_id,
+			good_name,
+			good_price,
+			type_id,
+			good_detail)
+		values(
+			#{good_id},
+			#{good_name},
+			#{good_price},
+			#{type_id},
+			#{good_detail})
+	</insert>
+	<!-- 更新配件信息 -->
+	<select id="getGoodById" parameterType="Integer" resultType="me.myshop.web.po.Good">
+		select * from goods where good_id=#{id }
+	</select>
+	<update id="updateGood" parameterType="me.myshop.web.po.Good">
+		update goods
+		<set>
+			<if test="good_name!=null">
+				good_name=#{good_name},
+			</if>
+			<if test="good_price!=null">
+				good_price=#{good_price},
+			</if>
+			<if test="type_id!=null">
+				type_id=#{type_id},
+			</if>
+			<if test="good_detail!=null">
+				good_detail=#{good_detail},
+			</if>
+			<if test="pic_url!=null">
+				pic_url=#{pic_url}
+			</if>
+		</set>
+		where good_id=#{good_id}
+	</update>
+	<!-- 删除配件 -->
+	<delete id="deleteGood" parameterType="Integer">
+		delete from goods where good_id=#{id}
+	</delete>
+	<!-- 设置库存 -->
+	<update id="setGood" parameterType="me.myshop.web.po.Good">
+		update goods
+		set good_detail='无货'
+		where good_id=#{id}
+	</update>
+</mapper>

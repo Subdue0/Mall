@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"  
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd"> 
+ 
+<mapper namespace="me.myshop.android.mapper.UserMapper">
+	<insert id="insertUser" parameterType="me.myshop.android.entity.User">
+		insert into customers(cust_id, cust_name, cust_password) values(#{uid}, #{nickname}, #{password})
+	</insert>
+
+	<update id="updatePasswordById">
+		update customers set cust_password=#{newPassword} where cust_id=#{uid}
+	</update>
+	
+	<update id="updateLoginStatusById">
+		update customers set cust_status=#{status} where cust_id=#{uid}
+	</update>
+	
+	<select id="selectUserNumber" resultType="Integer">
+		select count(*) user_number from customers
+	</select>
+	
+	<select id="selectUserById" parameterType="Integer" resultMap="UserMap">
+		select cust_id, cust_name, cust_password from customers where cust_id = #{id}
+	</select>
+	
+	<!-- 结果集关系映射 -->
+	<resultMap id="UserMap" type="me.myshop.android.entity.User">
+		<!--id为主键  -->
+		<id column="cust_id" property="uid"/>
+        <!--column数据库中表的名  property是对应类的属性  -->
+        <result column="cust_name" property="nickname"/>
+        <result column="cust_password" property="password"/>
+    </resultMap>
+    
+    <select id="selectLoginSatusById" parameterType="Integer" resultType="Integer">
+		select cust_status from customers where cust_id = #{id}
+	</select>
+</mapper>

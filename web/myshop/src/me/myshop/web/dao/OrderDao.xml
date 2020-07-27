@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.myshop.web.dao.OrderDao">
+	<!-- 查询订单列表 -->
+	<select id="selectOrderList" parameterType="me.myshop.web.po.Order" resultType="me.myshop.web.po.Order">
+		SELECT
+		orders.order_id,
+		cust_name,
+		cust_phone,
+		rec_name,
+		rec_phone,
+		rec_address,
+		order_time,
+		order_status
+		FROM
+		orders
+		INNER JOIN customers ON orders.cust_id=customers.cust_id
+		<where>
+			<if test="cust_name!=null">
+				cust_name LIKE "%"#{cust_name}"%"
+			</if>
+		</where>
+	</select>
+	<select id="selectOrderListCount" parameterType="me.myshop.web.po.Order" resultType="Integer">
+		select count(*) from orders
+	</select>
+	<!-- 查看订单商品 -->
+	<select id="selectOrderGood" parameterType="Integer" resultType="me.myshop.web.po.Og">
+		SELECT
+		goods.good_id,
+		goods.good_name,
+		good_num,
+		(good_price*good_num) as total_price
+		FROM
+		goods
+		INNER JOIN og ON og.good_id = goods.good_id
+		INNER JOIN orders ON og.order_id = orders.order_id
+		WHERE
+		orders.order_id=#{id}
+	</select>
+	<!-- 更新订单信息 -->
+	<select id="getOrderById" parameterType="Integer" resultType="me.myshop.web.po.Order">
+		select * from orders where order_id=#{id }
+	</select>
+	<update id="updateOrder" parameterType="me.myshop.web.po.Order">
+		update orders
+		<set>
+			<if test="rec_name!=null">
+				rec_name=#{rec_name},
+			</if>
+			<if test="rec_phone!=null">
+				rec_phone=#{rec_phone},
+			</if>
+			<if test="rec_address!=null">
+				rec_address=#{rec_address},
+			</if>
+			<if test="order_status!=null">
+				order_status=#{order_status}
+			</if>
+		</set>
+		where order_id=#{order_id}
+	</update>
+	<!-- 删除订单 -->
+	<delete id="deleteOrder" parameterType="Integer">
+		delete from orders where Order_id=#{id}
+	</delete>
+	<!-- 设置订单 -->
+	<update id="setOrder" parameterType="Integer">
+		update orders
+		set order_status='已取消'
+		where order_id=#{id}
+	</update>
+	<update id="setState" parameterType="Integer">
+		update orders
+		set order_status='已发货',
+		logistics_progress='商品已发货，等待揽收'
+		where order_id=#{id}
+	</update>
+</mapper>

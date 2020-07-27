@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx 
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop.xsd">
+    
+    <!-- 开启扫描 -->
+    <context:component-scan base-package="me.myshop.android.service, me.myshop.web.service"/>
+    
+    <!-- 读取db.properties -->
+    <context:property-placeholder location="classpath:db.properties"/>
+    
+    <!-- 配置数据源 -->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<!-- 数据库驱动 -->
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<!-- 连接数据库的url -->
+		<property name="url" value="${jdbc.url}" />
+		<!-- 连接数据库的用户名 -->
+		<property name="username" value="${jdbc.username}" />
+		<!-- 连接数据库的密码 -->
+		<property name="password" value="${jdbc.password}" />
+		<!-- 最大连接数 -->
+		<property name="maxTotal" value="${jdbc.maxTotal}" />
+		<!-- 最大空闲连接 -->
+		<property name="maxIdle" value="${jdbc.maxIdle}" />
+		<!-- 最大初始化连接 -->
+		<property name="initialSize" value="${jdbc.initialSize}" />
+	</bean>
+	
+	
+	<!-- 事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    	<property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!-- 注册事务管理器驱动 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- mybatis与spring整合 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 注入数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 指定核心配置文件位置 -->
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+	</bean>
+	<!-- Mapper代理开发 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="me.myshop.android.mapper, me.myshop.web.dao"></property>
+	</bean>
+	
+	<!-- 通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- 传播行为 -->
+			<tx:method name="save*" propagation="REQUIRED"/>
+			<tx:method name="insert*" propagation="REQUIRED"/>
+			<tx:method name="add*" propagation="REQUIRED"/>
+			<tx:method name="create*" propagation="REQUIRED"/>
+			<tx:method name="delete*" propagation="REQUIRED"/>
+			<tx:method name="update*" propagation="REQUIRED"/>
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true"/>
+			<tx:method name="select*" propagation="SUPPORTS" read-only="true"/>
+			<tx:method name="get*" propagation="SUPPORTS" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+	<!-- 切面 -->
+	<aop:config>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* me.myshop.web.service.*.*(..))"/>
+	</aop:config>
+	
+</beans>

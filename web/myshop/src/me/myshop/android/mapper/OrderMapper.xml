@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"  
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd"> 
+ 
+<mapper namespace="me.myshop.android.mapper.OrderMapper">
+	<insert id="insertOrder" parameterType="me.myshop.android.entity.Order">
+		insert into orders(order_id, cust_id, order_status, pay_mode, order_price, rec_name, rec_phone, rec_address) values(#{id}, #{uid}, #{logisticsStatus}, #{payMode}, #{totalCost}, #{recInfo.name}, #{recInfo.phone}, #{recInfo.address})
+	</insert>
+	
+	<select id="selectOrderTimeById" parameterType="Integer" resultType="java.util.Date">
+		select order_time from orders where order_id = #{id}
+	</select>
+	
+	<select id="selectMyOrders" parameterType="Integer" resultMap="OrdersMap">
+		select * from orders where cust_id = #{uid}
+	</select>
+	
+	<!-- 结果集关系映射 -->
+	<resultMap id="OrdersMap" type="me.myshop.android.entity.Order">
+		<!--id为主键  -->
+		<id column="order_id" property="id"/>
+        <!--column数据库中表的名  property是对应类的属性  -->
+        <result column="cust_id" property="uid"/>
+        <result column="pay_mode" property="payMode"/>
+        <result column="order_price" property="totalCost"/>
+        <result column="order_status" property="logisticsStatus"/>
+        <result column="rec_name" property="recInfo.name"/>
+        <result column="rec_phone" property="recInfo.phone"/>
+        <result column="rec_address" property="recInfo.address"/>
+        <result column="logistics_progress" property="logisticsProgress"/>
+    </resultMap>
+    
+    <select id="selectBuyGoodsById" parameterType="Integer" resultMap="GoodsMap">
+		select
+		og.good_id,
+		og.good_num,
+		goods.good_name,
+		goods.good_price,
+		goods.type_id,
+		goods.good_detail,
+		goods.good_icon_url,
+		goods.good_image_detail_url
+		from og inner join goods
+		on og.good_id = goods.good_id
+		where og.order_id = #{id}
+	</select>
+    
+    <!-- 结果集关系映射 -->
+	<resultMap id="GoodsMap" type="me.myshop.android.entity.Goods">
+		<!--id为主键  -->
+		<id column="good_id" property="id"/>
+        <!--column数据库中表的名  property是对应类的属性  -->
+        <result column="good_name" property="title"/>
+        <result column="good_num" property="number"/>
+        <result column="good_price" property="price"/>
+        <result column="type_id" property="type"/>
+        <result column="good_status" property="status"/>
+        <result column="good_icon_url" property="imageIcon"/>
+        <result column="good_image_detail_url" property="imageDetail"/>
+    </resultMap>
+    
+	
+	<select id="selectUserIdById" parameterType="Integer" resultType="Integer">
+		select cust_id from orders where order_id = #{id}
+	</select>
+	
+	<select id="selectOrderIdById" parameterType="Integer" resultType="Integer">
+		select order_id from orders where order_id = #{id}
+	</select>
+	
+	<select id="selectOrderNumber" resultType="Integer">
+		select count(*) order_number from orders
+	</select>
+	
+	<!-- 通过订单id删除订单 -->
+	<delete id="deleteOrderById" parameterType="Integer">
+		delete from orders where order_id=#{id}
+	</delete>
+		
+	<update id="updateOrder" parameterType="me.myshop.android.entity.Order">
+		update orders set pay_mode=#{payMode}, rec_name=#{recInfo.name}, rec_phone=#{recInfo.phone}, rec_address=#{recInfo.address} where order_id=#{id}
+	</update>
+</mapper>

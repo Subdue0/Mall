@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.myshop.web.dao.UserDao">
+	<!-- 根据用户名查询用户 -->
+	<select id="findUser" parameterType="String" resultType="me.myshop.web.po.User">
+		select * from sys_user where user_name =#{username} and user_password=#{password}
+	</select>
+</mapper>
+
+<!-- 	<insert id="insertCustomer" parameterType="customer">
+		insert into t_customer(username,jobs,phone)
+		values(#{username},#{jobs},#{phone})
+	</insert>
+
+	<delete id="deleteCustomer" parameterType="Integer">
+		delete from t_customer where id = #{id}
+	</delete>
+
+	<update id="updateCustomer" parameterType="customer">
+		update t_customer 
+		set username=#{username},jobs=#{jobs},phone=#{phone} where id=#{id}
+	</update> -->

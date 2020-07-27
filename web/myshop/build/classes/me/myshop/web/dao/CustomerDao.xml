@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.myshop.web.dao.CustomerDao">
+	<!-- 客户列表 -->
+	<select id="selectCustomerList" parameterType="me.myshop.web.po.Customer" resultType="me.myshop.web.po.Customer">
+		SELECT
+		cust_id,
+		cust_name,
+		cust_password,
+		cust_phone,
+		cust_address
+		FROM
+		customers
+		<where>
+			<if test="cust_name!=null">
+				cust_name LIKE "%"#{cust_name}"%"
+			</if>
+		</where>
+	</select>
+	
+	<!-- 创建客户 -->
+	<insert id="createCustomer" parameterType="me.myshop.web.po.Customer">
+		insert into customers(
+			cust_id,
+			cust_name,
+			cust_password,
+			cust_phone,
+			cust_address)
+		values(
+			#{cust_id},
+			#{cust_name},
+			#{cust_password},
+			#{cust_phone},
+			#{cust_address})
+	</insert>
+	
+	<!-- 更新配件信息 -->
+	<select id="getCustomerById" parameterType="Integer" resultType="me.myshop.web.po.Customer">
+		select * from customers where cust_id=#{id}
+	</select>
+	<update id="updateCustomer" parameterType="me.myshop.web.po.Customer">
+		update customers
+		<set>
+			<if test="cust_name!=null">
+				cust_name=#{cust_name},
+			</if>
+			<if test="cust_password!=null">
+				cust_password=#{cust_password},
+			</if>
+			<if test="cust_phone!=null">
+				cust_phone=#{cust_phone},
+			</if>
+			<if test="cust_address!=null">
+				cust_address=#{cust_address}
+			</if>
+		</set>
+		where cust_id=#{cust_id}
+	</update>
+	<!-- 删除配件 -->
+	<delete id="deleteCustomer" parameterType="Integer">
+		delete from customers where cust_id=#{id}
+	</delete>
+</mapper>
